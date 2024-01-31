@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,18 @@ class Message
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $created_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'emitter', targetEntity: Usuario::class)]
+    private Collection $emitter;
+
+    #[ORM\OneToMany(mappedBy: 'received', targetEntity: Usuario::class)]
+    private Collection $receiver;
+
+    public function __construct()
+    {
+        $this->emitter = new ArrayCollection();
+        $this->receiver = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +104,66 @@ class Message
     public function setCreatedAt(\DateTimeInterface $created_at): static
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Usuario>
+     */
+    public function getEmitter(): Collection
+    {
+        return $this->emitter;
+    }
+
+    public function addEmitter(Usuario $emitter): static
+    {
+        if (!$this->emitter->contains($emitter)) {
+            $this->emitter->add($emitter);
+            $emitter->setEmitter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmitter(Usuario $emitter): static
+    {
+        if ($this->emitter->removeElement($emitter)) {
+            // set the owning side to null (unless already changed)
+            if ($emitter->getEmitter() === $this) {
+                $emitter->setEmitter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Usuario>
+     */
+    public function getReceiver(): Collection
+    {
+        return $this->receiver;
+    }
+
+    public function addReceiver(Usuario $receiver): static
+    {
+        if (!$this->receiver->contains($receiver)) {
+            $this->receiver->add($receiver);
+            $receiver->setReceived($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceiver(Usuario $receiver): static
+    {
+        if ($this->receiver->removeElement($receiver)) {
+            // set the owning side to null (unless already changed)
+            if ($receiver->getReceived() === $this) {
+                $receiver->setReceived(null);
+            }
+        }
 
         return $this;
     }

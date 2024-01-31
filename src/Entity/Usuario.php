@@ -37,6 +37,27 @@ class Usuario
     #[ORM\Column(length: 500)]
     private ?string $image = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Publications $publications = null;
+
+    #[ORM\ManyToOne(inversedBy: 'user_following')]
+    private ?Follow $followers = null;
+
+    #[ORM\ManyToOne(inversedBy: 'user_followed')]
+    private ?Follow $following = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Liked $likes = null;
+
+    #[ORM\ManyToOne(inversedBy: 'emitter')]
+    private ?Message $emitter = null;
+
+    #[ORM\ManyToOne(inversedBy: 'receiver')]
+    private ?Message $received = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Notification $notifications = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -134,6 +155,90 @@ class Usuario
     public function setImage(string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPublications(): ?Publications
+    {
+        return $this->publications;
+    }
+
+    public function setPublications(?Publications $publications): static
+    {
+        $this->publications = $publications;
+
+        return $this;
+    }
+
+    public function getFollowers(): ?Follow
+    {
+        return $this->followers;
+    }
+
+    public function setFollowers(?Follow $followers): static
+    {
+        $this->followers = $followers;
+
+        return $this;
+    }
+
+    public function getFollowing(): ?Follow
+    {
+        return $this->following;
+    }
+
+    public function setFollowing(?Follow $following): static
+    {
+        $this->following = $following;
+
+        return $this;
+    }
+
+    public function getLikes(): ?Liked
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(?Liked $likes): static
+    {
+        $this->likes = $likes;
+
+        return $this;
+    }
+
+    public function getEmitter(): ?Message
+    {
+        return $this->emitter;
+    }
+
+    public function setEmitter(?Message $emitter): static
+    {
+        $this->emitter = $emitter;
+
+        return $this;
+    }
+
+    public function getReceived(): ?Message
+    {
+        return $this->received;
+    }
+
+    public function setReceived(?Message $received): static
+    {
+        $this->received = $received;
+
+        return $this;
+    }
+
+    public function getNotifications(): ?Notification
+    {
+        return $this->notifications;
+    }
+
+    public function setNotifications(?Notification $notifications): static
+    {
+        $this->notifications = $notifications;
 
         return $this;
     }
