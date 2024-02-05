@@ -4,9 +4,12 @@ namespace App\Entity;
 
 use App\Repository\UsuarioRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsuarioRepository::class)]
-class Usuario
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class Usuario implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,6 +40,9 @@ class Usuario
     #[ORM\Column(length: 500)]
     private ?string $image = null;
 
+    #[ORM\Column(type:"json")]
+    private $roles = [];
+
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Publications $publications = null;
 
@@ -57,6 +63,9 @@ class Usuario
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Notification $notifications = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isVerified = false;
 
     public function getId(): ?int
     {
@@ -239,6 +248,36 @@ class Usuario
     public function setNotifications(?Notification $notifications): static
     {
         $this->notifications = $notifications;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+     $roles = $this->roles;
+     $roles[] = 'ROLE_USER';
+
+     return array_unique($roles);
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
